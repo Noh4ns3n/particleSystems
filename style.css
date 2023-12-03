@@ -10,3 +10,15 @@
   top: 0;
   left:0;
 }
+
+#caption {
+  color:rgb(0, 145, 212);
+  font-size: 120px;
+  position:absolute;
+  font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  top: 50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  border-top: 5px solid rgb(0, 145, 212);
+  user-select: none;
+}
