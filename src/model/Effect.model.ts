@@ -1,14 +1,98 @@
 import { Particle } from "./Particle.model";
 
-type Mouse = {
+/*type Mouse = {
     x: number;
     y: number;
     pressed: boolean;
     radius: number;
   };
-
+*/
 export class Effect {
-    canvas: HTMLCanvasElement;
+  // width: number;
+  // height: number;
+  lineHeight: number;
+  canvas: HTMLCanvasElement;
+  context: CanvasRenderingContext2D;
+  maxTextWidth: number;
+  textX: number;
+  textY: number;
+  textInput: HTMLInputElement;
+
+  constructor(canvas: HTMLCanvasElement) {
+    // this.width = this.canvas.width;
+    // this.height = this.canvas.height;
+    this.canvas = canvas;
+    this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.maxTextWidth = this.canvas.width * 0.5;
+    this.lineHeight = 70;
+    this.textX = this.canvas.width / 2;
+    this.textY = this.canvas.height / 2;
+    this.textInput = document.getElementById("textInput1") as HTMLInputElement;
+    
+    this.textInput.addEventListener("keyup", (e) => {
+      console.log('this :>> ', this);
+      if (e.key !== " ") {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.wrapText((e.target as HTMLInputElement).value);
+      }
+    });
+
+  }
+  setupContext() {
+    //canvas settings
+    this.context.lineWidth = 1;
+    this.context.strokeStyle = "gold";
+    this.context.font = "80px Impact";
+    this.context.textAlign = "center";
+    this.context.textBaseline = "middle";
+    const gradient: CanvasGradient = this.context.createLinearGradient(
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
+    );
+    gradient.addColorStop(0.3, "magenta");
+    gradient.addColorStop(0.5, "darkorange");
+    gradient.addColorStop(0.7, "blue");
+    this.context.fillStyle = gradient;
+  }
+  wrapText(text: string) {
+    this.setupContext();
+
+    //multi-line display
+    let linesArray: string[] = [];
+    let lineCounter: number = 0;
+    let line: string = '';
+    let words: string[] = text.split(' ');
+
+    for (let i: number = 0; i < words.length; i++) {
+      let testLine: string = line + words[i] + ' ';
+      if (this.context.measureText(testLine).width > this.maxTextWidth) {
+        line = words[i] + ' ';
+        lineCounter++;
+      } else {
+        line = testLine;
+      }
+      linesArray[lineCounter] = line;
+    }
+    let textHeight: number = this.lineHeight * lineCounter;
+    let textY: number = this.canvas.height / 2 - textHeight / 2;
+    linesArray.forEach((el, index) => {
+      this.context.fillText(
+        el,
+        this.canvas.width / 2,
+        textY + index * this.lineHeight
+      );
+      this.context.strokeText(
+        el,
+        this.canvas.width / 2,
+        textY + index * this.lineHeight
+      );
+    });
+  }
+  convertToParticles() {}
+  render() {}
+  /*canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     width: number;
     height: number;
@@ -118,5 +202,5 @@ export class Effect {
         if(particle.x < particle.radius || particle.x > this.canvas.width - particle.radius || particle.y < particle.radius || particle.y > this.canvas.height - particle.radius)
         particle.reset();
       });
-    }
-  }
+    }*/
+}

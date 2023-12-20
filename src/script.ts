@@ -1,11 +1,14 @@
+import { Effect } from "./model/Effect.model";
+
 window.addEventListener("load", function () {
-  const textInput = document.getElementById("textInput1") as HTMLInputElement;
+  
   const canvas = document.getElementById("canvas1") as HTMLCanvasElement;
-  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+  
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  console.log(ctx);
 
+  const effect : Effect = new Effect(canvas);
+/*
   //vertical bar
   ctx.strokeStyle = "red";
   ctx.lineWidth = 2;
@@ -22,7 +25,12 @@ window.addEventListener("load", function () {
   ctx.lineTo(canvas.width, canvas.height / 2);
   ctx.stroke();
 
-  ctx.fillStyle = "darkorange";
+  //text props
+  const gradient:CanvasGradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+  gradient.addColorStop(0.3, 'magenta');
+  gradient.addColorStop(0.5, 'darkorange');
+  gradient.addColorStop(0.7, 'blue');
+  ctx.fillStyle = gradient;
   ctx.strokeStyle = "white";
   ctx.font = "80px Impact";
   ctx.textAlign = "center";
@@ -58,5 +66,5 @@ window.addEventListener("load", function () {
   textInput.addEventListener('keyup', (e) => {
     ctx.clearRect(0,0,canvas.width, canvas.height);
     wrapText((e.target as HTMLInputElement).value);
-  })
+  })*/
 });
