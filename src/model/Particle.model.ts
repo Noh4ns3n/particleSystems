@@ -1,18 +1,51 @@
 import { Effect } from "./Effect.model";
 
 export class Particle {
-    effect: Effect;
-    x: number;
-    y: number;
-    radius: number;
-    vx: number;
-    vy: number;
-    pushX: number;
-    pushY: number;
-    friction: number;
-  
-    constructor(effect: Effect) {
-      this.effect = effect;
+  effect: Effect;
+  x: number;
+  y: number;
+  x0: number;
+  y0: number;
+  color: string;
+  size: number;
+  dx: number;
+  dy: number;
+  vx: number;
+  vy: number;
+  force: number;
+  angle: number;
+  distance: number;
+  friction: number;
+  ease:number;
+  constructor(effect: Effect, x: number, y: number, color: string) {
+    this.effect = effect;
+    this.x = Math.random() * this.effect.canvas.width;
+    this.y = 0;
+    this.x0 = x;
+    this.y0 = y;
+    this.color = color;
+    this.size = this.effect.gap;
+    this.dx = 0;
+    this.dy = 0;
+    this.vx = 0;
+    this.vy = 0;
+    this.force = 0;
+    this.angle = 0;
+    this.distance = 0;
+    this.friction = Math.random() * 0.5 + 0.15;
+    this.ease = Math.random() * 0.1 + 0.005;
+  }
+  draw() {
+  this.effect.context.fillStyle = this.color;
+  this.effect.context.fillRect(this.x, this.y, this.size, this.size);
+  }
+  update() {
+    this.x += (this.x0 - this.x)*this.ease;
+    this.y += (this.y0 - this.y)*this.ease;
+  }
+
+
+    /*
       this.radius = Math.floor(Math.random() * 4 + 2);
       this.x =
         this.radius + Math.random() * (this.effect.width - this.radius * 2);
@@ -76,5 +109,6 @@ export class Particle {
         this.vy *= -1;
         this.pushY *= -1;
       }
-    }
+      */
   }
+

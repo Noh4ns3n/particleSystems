@@ -3,11 +3,20 @@ import { Effect } from "./model/Effect.model";
 window.addEventListener("load", function () {
   
   const canvas = document.getElementById("canvas1") as HTMLCanvasElement;
+  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
   
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
   const effect : Effect = new Effect(canvas);
+  effect.wrapText('Zog zog akita');
+  
+  function animate() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    effect.render();
+    requestAnimationFrame(animate);
+  }
+  animate();
 /*
   //vertical bar
   ctx.strokeStyle = "red";

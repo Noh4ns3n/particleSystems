@@ -1,12 +1,12 @@
 import { Particle } from "./Particle.model";
 
-/*type Mouse = {
-    x: number;
-    y: number;
-    pressed: boolean;
-    radius: number;
-  };
-*/
+type Mouse = {
+  x: number;
+  y: number;
+  pressed: boolean;
+  radius: number;
+};
+
 export class Effect {
   // width: number;
   // height: number;
@@ -18,25 +18,42 @@ export class Effect {
   textY: number;
   textInput: HTMLInputElement;
 
+  particles: Particle[];
+  gap: number;
+  mouse: Mouse;
+
   constructor(canvas: HTMLCanvasElement) {
     // this.width = this.canvas.width;
     // this.height = this.canvas.height;
     this.canvas = canvas;
     this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
-    this.maxTextWidth = this.canvas.width * 0.5;
+    this.maxTextWidth = this.canvas.width * 0.8;
     this.lineHeight = 70;
     this.textX = this.canvas.width / 2;
     this.textY = this.canvas.height / 2;
     this.textInput = document.getElementById("textInput1") as HTMLInputElement;
-    
+
+    //particles text
+    this.particles = [];
+    this.gap = 5;
+    this.mouse = {
+      x: 0,
+      y: 0,
+      pressed: false,
+      radius: 20000,
+    };
+
+    window.addEventListener("mousemove", (e) => {
+      this.mouse.x = e.x;
+      this.mouse.y = e.y;
+    });
+
     this.textInput.addEventListener("keyup", (e) => {
-      console.log('this :>> ', this);
       if (e.key !== " ") {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.wrapText((e.target as HTMLInputElement).value);
       }
     });
-
   }
   setupContext() {
     //canvas settings
@@ -59,39 +76,71 @@ export class Effect {
   wrapText(text: string) {
     this.setupContext();
 
-    //multi-line display
     let linesArray: string[] = [];
     let lineCounter: number = 0;
-    let line: string = '';
-    let words: string[] = text.split(' ');
-
+    let line: string = "";
+    let words: string[] = text.split(" ");
+    //break text into multiple lines
     for (let i: number = 0; i < words.length; i++) {
-      let testLine: string = line + words[i] + ' ';
+      let testLine: string = line + words[i] + " ";
       if (this.context.measureText(testLine).width > this.maxTextWidth) {
-        line = words[i] + ' ';
+        line = words[i] + " ";
         lineCounter++;
       } else {
         line = testLine;
       }
       linesArray[lineCounter] = line;
     }
+    //draw on canvas
     let textHeight: number = this.lineHeight * lineCounter;
-    let textY: number = this.canvas.height / 2 - textHeight / 2;
+    this.textY = this.canvas.height / 2 - textHeight / 2;
     linesArray.forEach((el, index) => {
       this.context.fillText(
         el,
         this.canvas.width / 2,
-        textY + index * this.lineHeight
+        this.textY + index * this.lineHeight
       );
       this.context.strokeText(
         el,
         this.canvas.width / 2,
-        textY + index * this.lineHeight
+        this.textY + index * this.lineHeight
       );
     });
+
+    this.convertToParticles();
   }
-  convertToParticles() {}
-  render() {}
+  convertToParticles() {
+    this.particles = [];
+    const pixels: Uint8ClampedArray = this.context.getImageData(
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
+    ).data;
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    for (let y: number = 0; y < this.canvas.height; y += this.gap) {
+      for (let x: number = 0; x < this.canvas.width; x += this.gap) {
+        // 4 elements in pixels array per pixel. index = index of pixel
+        const index: number = (y * this.canvas.width + x) * 4;
+        const alpha: number = pixels[index + 3];
+        if (alpha > 0) {
+          const red: number = pixels[index];
+          const green: number = pixels[index + 1];
+          const blue: number = pixels[index + 2];
+          const color: string = `rgb(${red},${green},${blue})`;
+          const particle: Particle = new Particle(this, x, y, color);
+          this.particles.push(particle);
+        }
+      }
+    }
+  }
+  render() {
+    this.particles.forEach((particle) => {
+      particle.update();
+      particle.draw();
+    });
+  }
+
   /*canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     width: number;
