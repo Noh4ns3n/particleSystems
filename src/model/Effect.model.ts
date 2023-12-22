@@ -28,14 +28,14 @@ export class Effect {
     this.canvas = canvas;
     this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     this.maxTextWidth = this.canvas.width * 0.8;
-    this.lineHeight = 70;
+    this.lineHeight = 120;
     this.textX = this.canvas.width / 2;
     this.textY = this.canvas.height / 2;
     this.textInput = document.getElementById("textInput1") as HTMLInputElement;
 
     //particles text
     this.particles = [];
-    this.gap = 5;
+    this.gap = 2;
     this.mouse = {
       x: 0,
       y: 0,
@@ -58,8 +58,8 @@ export class Effect {
   setupContext() {
     //canvas settings
     this.context.lineWidth = 1;
-    this.context.strokeStyle = "gold";
-    this.context.font = "80px Impact";
+    this.context.strokeStyle = "pink";
+    this.context.font = `${this.lineHeight}px Impact`;
     this.context.textAlign = "center";
     this.context.textBaseline = "middle";
     const gradient: CanvasGradient = this.context.createLinearGradient(
@@ -68,9 +68,8 @@ export class Effect {
       this.canvas.width,
       this.canvas.height
     );
-    gradient.addColorStop(0.3, "magenta");
-    gradient.addColorStop(0.5, "darkorange");
-    gradient.addColorStop(0.7, "blue");
+    gradient.addColorStop(0.3, "rgba(34,193,195,1)");
+    gradient.addColorStop(0.7, "rgba(253,187,45,1)");
     this.context.fillStyle = gradient;
   }
   wrapText(text: string) {
